@@ -22,6 +22,11 @@ namespace CWS_GraphingUtility.Utiltity
         Dictionary<int, StageData> stages;
 
         /// <summary>
+        /// List of <see cref="StageData"/> objects to serve as a backup.
+        /// </summary>
+        Dictionary<int, StageData> stagesBackup;
+
+        /// <summary>
         /// String representation of the job title.
         /// </summary>
         private string jobTitle;
@@ -75,6 +80,11 @@ namespace CWS_GraphingUtility.Utiltity
             stages = new Dictionary<int,StageData>();
             JobDate = dt;
             ParseJobData(filePath);
+
+            if(stages.Count > 0)
+            {
+                stagesBackup = new Dictionary<int, StageData>(stages);
+            }
         }
 
         #endregion
@@ -162,6 +172,19 @@ namespace CWS_GraphingUtility.Utiltity
         public int GetFirstStageNumber()
         {
             return stages.Keys.First<int>();
+        }
+
+        public void DeleteStage(int stage)
+        {
+            if(stages.ContainsKey(stage))
+            {
+                stages.Remove(stage);
+            }
+        }
+
+        public void UndoAllChanges()
+        {
+            stages = new Dictionary<int, StageData>(stagesBackup);
         }
 
         #endregion

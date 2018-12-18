@@ -70,6 +70,18 @@
     <Compile Include="GUI\ChartConfigForm.Designer.cs">
       <DependentUpon>ChartConfigForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="GUI\Controls\AnnotationPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="GUI\Controls\AnnotationPanel.Designer.cs">
+      <DependentUpon>AnnotationPanel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="GUI\Controls\DataManipulationPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="GUI\Controls\DataManipulationPanel.Designer.cs">
+      <DependentUpon>DataManipulationPanel.cs</DependentUpon>
+    </Compile>
     <Compile Include="GUI\Controls\GraphSelecterDisplayPanel.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -88,6 +100,12 @@
     <Compile Include="GUI\GraphHolder.Designer.cs">
       <DependentUpon>GraphHolder.cs</DependentUpon>
     </Compile>
+    <Compile Include="GUI\HelperScreen.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GUI\HelperScreen.Designer.cs">
+      <DependentUpon>HelperScreen.cs</DependentUpon>
+    </Compile>
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -101,6 +119,12 @@
     <EmbeddedResource Include="GUI\ChartConfigForm.resx">
       <DependentUpon>ChartConfigForm.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="GUI\Controls\AnnotationPanel.resx">
+      <DependentUpon>AnnotationPanel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GUI\Controls\DataManipulationPanel.resx">
+      <DependentUpon>DataManipulationPanel.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="GUI\Controls\GraphSelecterDisplayPanel.resx">
       <DependentUpon>GraphSelecterDisplayPanel.cs</DependentUpon>
     </EmbeddedResource>
@@ -109,6 +133,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="GUI\GraphHolder.resx">
       <DependentUpon>GraphHolder.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GUI\HelperScreen.resx">
+      <DependentUpon>HelperScreen.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

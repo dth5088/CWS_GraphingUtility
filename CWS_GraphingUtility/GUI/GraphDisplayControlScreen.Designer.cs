@@ -28,20 +28,9 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.graphDisplayPanel = new CWS_GraphingUtility.GUI.Controls.GraphSelecterDisplayPanel();
             this.configButton = new System.Windows.Forms.Button();
+            this.graphDisplayPanel = new CWS_GraphingUtility.GUI.Controls.GraphSelecterDisplayPanel();
             this.SuspendLayout();
-            // 
-            // graphDisplayPanel
-            // 
-            this.graphDisplayPanel.BackColor = System.Drawing.SystemColors.ControlDark;
-            this.graphDisplayPanel.Location = new System.Drawing.Point(41, 25);
-            this.graphDisplayPanel.Name = "graphDisplayPanel";
-            this.graphDisplayPanel.Size = new System.Drawing.Size(1100, 700);
-            this.graphDisplayPanel.StageData = null;
-            this.graphDisplayPanel.StageNumber = 1;
-            this.graphDisplayPanel.TabIndex = 0;
-            this.graphDisplayPanel.TotalStages = 0;
             // 
             // configButton
             // 
@@ -53,6 +42,17 @@
             this.configButton.Text = "Config";
             this.configButton.UseVisualStyleBackColor = true;
             this.configButton.Click += new System.EventHandler(this.configButton_Click);
+            // 
+            // graphDisplayPanel
+            // 
+            this.graphDisplayPanel.BackColor = System.Drawing.SystemColors.ControlDark;
+            this.graphDisplayPanel.Location = new System.Drawing.Point(41, 25);
+            this.graphDisplayPanel.Name = "graphDisplayPanel";
+            this.graphDisplayPanel.Size = new System.Drawing.Size(1100, 700);
+            this.graphDisplayPanel.StageData = null;
+            this.graphDisplayPanel.StageNumber = 1;
+            this.graphDisplayPanel.TabIndex = 0;
+            this.graphDisplayPanel.TotalStages = 0;
             // 
             // GraphDisplayControlScreen
             // 

@@ -116,6 +116,8 @@ namespace CWS_GraphingUtility.Utiltity
             }
 
             CreateStageCollections(pressure, water, sand, duration);
+
+            SortCollections();
         }
 
 
@@ -166,13 +168,20 @@ namespace CWS_GraphingUtility.Utiltity
             
         }
 
+        private void SortCollections()
+        {
+            pressureData.OrderBy(i => i.Key);
+            waterData.OrderBy(i => i.Key);
+            sandData.OrderBy(i => i.Key);
+        }
+
         /// <summary>
         /// Deletes all of the items in the pressureData list that fall
         /// within the start and end times passed.
         /// </summary>
         /// <param name="start">The first time to delete.</param>
         /// <param name="end">The last time to delete.</param>
-        private void DeletePressurFromTo(DateTime start, DateTime end)
+        public void DeletePressurFromTo(DateTime start, DateTime end)
         {
             var temp = pressureData;
             foreach (var obj in temp)
@@ -184,13 +193,66 @@ namespace CWS_GraphingUtility.Utiltity
             }
         }
 
+        public void DeleteAllValuesBefore(DateTime start)
+        {
+            var temp = pressureData;
+
+            foreach(var obj in temp)
+            {
+                if(obj.Key.CompareTo(start) < 0 )
+                {
+                    pressureData.Remove(obj.Key);
+                    waterData.Remove(obj.Key);
+                    sandData.Remove(obj.Key);
+                }
+            }
+        }
+
+        public void DeteAllValuesAfter(DateTime start)
+        {
+            var temp = pressureData;
+            foreach(var obj in temp)
+            {
+                if(obj.Key.CompareTo(start) > 0)
+                {
+                    pressureData.Remove(obj.Key);
+                    waterData.Remove(obj.Key);
+                    sandData.Remove(obj.Key);
+                }
+            }
+        }
+
+        public bool IsProvidedDateValid(DateTime toTest)
+        {
+            bool IsValid = false;
+
+            DateTime endDateTime = pressureData.Keys.Last();
+            DateTime startDateTime = pressureData.Keys.First();
+
+
+            IsValid = toTest <= endDateTime && toTest <= startDateTime;
+
+            return IsValid;
+        }
+
+        public Tuple<DateTime,DateTime> GetStartEndTimes()
+        {
+            DateTime b = PressureSeriesData.Keys.First();
+
+            DateTime e = PressureSeriesData.Keys.Last();
+
+            return new Tuple<DateTime, DateTime>(b, e);
+        }
+
+
+
         /// <summary>
         /// Deletes all of the items in the pressureData list that fall
         /// within the start and end times passed.
         /// </summary>
         /// <param name="start">The first time to delete.</param>
         /// <param name="end">The last time to delete.</param>
-        private void DeleteWaterFromTo(DateTime start, DateTime end)
+        public void DeleteWaterFromTo(DateTime start, DateTime end)
         {
             var temp = waterData;
             foreach (var obj in temp)
@@ -208,7 +270,7 @@ namespace CWS_GraphingUtility.Utiltity
         /// </summary>
         /// <param name="start">The first time to delete.</param>
         /// <param name="end">The last time to delete.</param>
-        private void DeleteSandFromTo(DateTime start, DateTime end)
+        public void DeleteSandFromTo(DateTime start, DateTime end)
         {
             var temp = sandData;
             foreach (var obj in temp)

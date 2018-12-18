@@ -68,16 +68,31 @@ namespace CWS_GraphingUtility.GUI.Controls
 
         private MenuItem viewMode;
 
+        private MenuItem addAnnotation;
+
+        private MenuItem deleteStage;
+
+        private MenuItem undoChanges;
+
+        private MenuItem print;
+
         private ContextMenu contextMenu;
 
+        public event ModeChangeHandler ChangeMode;
+
+        public event AnnotationHandler AddAnnotation;
+
+        public event StageDeletionHandler CallDelete;
+
+        public delegate void ModeChangeHandler(object o, ModeChangeEventArgs e);
+
+        public delegate void AnnotationHandler(object o, EventArgs e);
+
+        public delegate void StageDeletionHandler(object o, EventArgs e);
 
         #endregion
 
         #region Properties
-
-        public event ModeChangeHandler ChangeMode;
-
-        public delegate void ModeChangeHandler(object o, ModeChangeEventArgs e);
 
 
         /// <summary>
@@ -204,7 +219,6 @@ namespace CWS_GraphingUtility.GUI.Controls
             displayedChart.Update();
         }
 
-
         /// <summary>
         /// Initalizes the first stage in the data.
         /// </summary>
@@ -215,7 +229,6 @@ namespace CWS_GraphingUtility.GUI.Controls
 
             UpdateStageDetails();
         }
-
 
         /// <summary>
         /// Changes a series line color on the chart.
@@ -245,6 +258,28 @@ namespace CWS_GraphingUtility.GUI.Controls
             displayedChart.Update();
         }
 
+        public void ResetContextMenu()
+        {
+            var parent = Parent as GraphDisplayControlScreen;
+
+            currentMode = Mode.View;
+            contextMenu.MenuItems.Clear();
+
+            contextMenu.MenuItems.Add(editMode);
+            contextMenu.MenuItems.Add(addAnnotation);
+            contextMenu.MenuItems.Add(deleteStage);
+
+            if(parent != null)
+            {
+                parent.AlertHelperScreenClosed();
+            }
+        }
+
+        public void UpdateChartValues()
+        {
+            UpdateStageDetails();
+        }
+
         #endregion
 
         #region Private
@@ -254,7 +289,16 @@ namespace CWS_GraphingUtility.GUI.Controls
             contextMenu = new ContextMenu();
             editMode = new MenuItem("Enter Edit Mode", new EventHandler(EditDataMode_Click));
             viewMode = new MenuItem("Enter View Mode", new EventHandler(ViewDataMode_Click));
+            addAnnotation = new MenuItem("Add Annotation", new EventHandler(AddAnnotation_Click));
+            deleteStage = new MenuItem("Delete Current Stage", new EventHandler(DeleteStage_Click));
+            undoChanges = new MenuItem("Undo All Changes", new EventHandler(UndoChanges_Click));
+            print = new MenuItem("Print", new EventHandler(Print_Click));
+
             contextMenu.MenuItems.Add(editMode);
+            contextMenu.MenuItems.Add(addAnnotation);
+            contextMenu.MenuItems.Add(deleteStage);
+            contextMenu.MenuItems.Add(undoChanges);
+            contextMenu.MenuItems.Add(print);
 
             displayedChart.ContextMenu = contextMenu;
         }
@@ -305,6 +349,10 @@ namespace CWS_GraphingUtility.GUI.Controls
                     StageData.FillSandSeries(displayedChart.Series["SandSeries"]);
                     displayedChart.Update();
                 }
+                else
+                {
+                    ChangeStage(false);
+                }
             }
 
         }
@@ -341,11 +389,13 @@ namespace CWS_GraphingUtility.GUI.Controls
         {
             if(null != ChangeMode)
             {
-                ChangeMode(this, new ModeChangeEventArgs(Mode.Edit));
+                var times = StageData.GetStartEndTimes();
+                ChangeMode(this, new ModeChangeEventArgs(Mode.Edit,times.Item1, times.Item2));
                 if(contextMenu.MenuItems.Contains(editMode))
                 {
-                    contextMenu.MenuItems.Remove(editMode);
+                    contextMenu.MenuItems.Clear();
                     contextMenu.MenuItems.Add(viewMode);
+                    contextMenu.MenuItems.Add(addAnnotation);
                 }
             }
         }
@@ -358,11 +408,42 @@ namespace CWS_GraphingUtility.GUI.Controls
 
                 if (contextMenu.MenuItems.Contains(viewMode))
                 {
-                    contextMenu.MenuItems.Remove(viewMode);
-                    contextMenu.MenuItems.Add(editMode);
+                    ResetContextMenu();
                 }
             }
         }
+
+        /// <summary>
+        /// Handles when the Add Annotations ContextMenuItem is clicked.
+        /// </summary>
+        /// <param name="sender">The invoker of the event.</param>
+        /// <param name="e">The event arguments.</param>
+        private void AddAnnotation_Click(object sender, EventArgs e)
+        {
+            AddAnnotation(this, new EventArgs());
+        }
+
+        private void DeleteStage_Click(object sender, EventArgs e)
+        {
+            CallDelete(this, new EventArgs());
+        }
+
+        private void UndoChanges_Click(object sender, EventArgs e)
+        {
+            var parent = Parent as GraphDisplayControlScreen;
+
+            if(parent != null)
+            {
+                parent.UndoAllChanges();
+                UpdateStageDetails();
+            }
+        }
+
+        private void Print_Click(object sender, EventArgs e)
+        {
+            Console.Out.WriteLine("Print was clicked!");
+        }
+
         #endregion
     }
 
@@ -371,9 +452,23 @@ namespace CWS_GraphingUtility.GUI.Controls
     {
         public Mode Mode { get; private set; }
 
+        public DateTime Beginning { get; private set; }
+
+        public DateTime End { get; private set; }
+
         public ModeChangeEventArgs(Mode mode)
         {
             Mode = mode;
+            Beginning = DateTime.Now;
+            End = DateTime.Now;
+        }
+
+        public ModeChangeEventArgs(Mode mode, DateTime b, DateTime e)
+        {
+            Mode = mode;
+            Beginning = b;
+            End = e;
         }
     }
+
 }

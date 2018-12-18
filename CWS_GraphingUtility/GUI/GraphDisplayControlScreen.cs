@@ -1,6 +1,5 @@
 ﻿using CWS_GraphingUtility.GUI.Controls;
 using CWS_GraphingUtility.Utiltity;
-using LiveCharts.WinForms;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -27,6 +26,10 @@ namespace CWS_GraphingUtility.GUI
         /// </summary>
         private ChartConfigForm ccf;
 
+        private Utilities utilityScreen;
+
+        private int currentStageNumber = 0;
+
         #endregion
 
         #region Properties
@@ -42,6 +45,8 @@ namespace CWS_GraphingUtility.GUI
         public GraphDisplayControlScreen()
         {
             InitializeComponent();
+
+            utilityScreen = new Utilities();
         }
 
         #endregion
@@ -76,6 +81,10 @@ namespace CWS_GraphingUtility.GUI
 
             graphDisplayPanel.ChangeMode += new GraphSelecterDisplayPanel.ModeChangeHandler(OnModeChanged);
 
+            graphDisplayPanel.AddAnnotation += new GraphSelecterDisplayPanel.AnnotationHandler(OnAddAnnotation);
+
+            graphDisplayPanel.CallDelete += new GraphSelecterDisplayPanel.StageDeletionHandler(OnStageDeletion);
+
         }
 
         /// <summary>
@@ -87,11 +96,24 @@ namespace CWS_GraphingUtility.GUI
         {
             if(jobData != null)
             {
-                return jobData.GetDetailsForStage(number);
+
+                var stage = jobData.GetDetailsForStage(number);
+                currentStageNumber = number;
+                utilityScreen.UpdateStageData(stage);
+                return stage;
             }
             return null;
         }
 
+        public void AlertHelperScreenClosed()
+        {
+            graphDisplayPanel.ResetContextMenu();
+        }
+
+        public void UndoAllChanges()
+        {
+            jobData.UndoAllChanges();
+        }
 
         #endregion
 
@@ -149,7 +171,38 @@ namespace CWS_GraphingUtility.GUI
         private void OnModeChanged(object sender, ModeChangeEventArgs e)
         {
             string outMode = e.Mode == Mode.Edit ? " Edit" : "View";
-            Console.Out.WriteLine("Mode is now: " + outMode);
+            bool editMode = e.Mode == Mode.Edit;
+
+            if (editMode)
+            {
+                if(e.Beginning != null && e.End != null)
+                {
+                    utilityScreen.OpenDialog(UtilityMode.DataManipulation, e.Beginning, e.End);
+                }
+                else
+                {
+                    utilityScreen.OpenDialog(UtilityMode.DataManipulation, e.Beginning, e.End);
+                }
+            }
+
+            
+        }
+
+        private void OnAddAnnotation(object sender, EventArgs e)
+        {
+            utilityScreen.OpenDialog(UtilityMode.Annotation);
+        }
+
+        private void OnStageDeletion(object sender, EventArgs e)
+        {
+            DialogResult result = MessageBox.Show("Are you sure you wish to delete stage " + currentStageNumber + " + ?", "Confirmation Prompt", MessageBoxButtons.YesNo);
+
+            if(result == DialogResult.Yes)
+            {
+                jobData.DeleteStage(currentStageNumber);
+
+                
+            }
         }
         #endregion
     }
