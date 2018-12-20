@@ -47,6 +47,8 @@ namespace CWS_GraphingUtility.GUI
             InitializeComponent();
 
             utilityScreen = new Utilities();
+
+            utilityScreen.annotationPanel.AnnotationCreated += new AnnotationPanel.ChartAnnotationHandler(OnAddAnnotation);
         }
 
         #endregion
@@ -105,14 +107,15 @@ namespace CWS_GraphingUtility.GUI
             return null;
         }
 
-        public void AlertHelperScreenClosed()
-        {
-            graphDisplayPanel.ResetContextMenu();
-        }
 
         public void UndoAllChanges()
         {
             jobData.UndoAllChanges();
+        }
+
+        public void RefreshChart()
+        {
+            graphDisplayPanel.UpdateChartValues();
         }
 
         #endregion
@@ -191,6 +194,11 @@ namespace CWS_GraphingUtility.GUI
         private void OnAddAnnotation(object sender, EventArgs e)
         {
             utilityScreen.OpenDialog(UtilityMode.Annotation);
+        }
+
+        private void OnAnnotationCreated(object sender, AnnotationEventArgs e)
+        {
+            graphDisplayPanel.AddAnnotationToGraph(e.Time, e.Comment);
         }
 
         private void OnStageDeletion(object sender, EventArgs e)

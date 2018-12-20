@@ -32,6 +32,8 @@
             this.commentTextBox = new System.Windows.Forms.TextBox();
             this.CancelButton = new System.Windows.Forms.Button();
             this.RemoveButton = new System.Windows.Forms.Button();
+            this.timeTextBox = new System.Windows.Forms.TextBox();
+            this.positionLabel = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // label1
@@ -55,7 +57,7 @@
             // CancelButton
             // 
             this.CancelButton.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.CancelButton.Location = new System.Drawing.Point(159, 118);
+            this.CancelButton.Location = new System.Drawing.Point(160, 137);
             this.CancelButton.Name = "CancelButton";
             this.CancelButton.Size = new System.Drawing.Size(82, 38);
             this.CancelButton.TabIndex = 11;
@@ -66,18 +68,39 @@
             // RemoveButton
             // 
             this.RemoveButton.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.RemoveButton.Location = new System.Drawing.Point(40, 118);
+            this.RemoveButton.Location = new System.Drawing.Point(46, 137);
             this.RemoveButton.Name = "RemoveButton";
             this.RemoveButton.Size = new System.Drawing.Size(82, 38);
             this.RemoveButton.TabIndex = 10;
-            this.RemoveButton.Text = "Remove";
+            this.RemoveButton.Text = "Add";
             this.RemoveButton.UseVisualStyleBackColor = true;
             this.RemoveButton.Click += new System.EventHandler(this.RemoveButton_Click);
+            // 
+            // timeTextBox
+            // 
+            this.timeTextBox.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.timeTextBox.Location = new System.Drawing.Point(91, 99);
+            this.timeTextBox.Name = "timeTextBox";
+            this.timeTextBox.Size = new System.Drawing.Size(173, 26);
+            this.timeTextBox.TabIndex = 12;
+            this.timeTextBox.TextChanged += new System.EventHandler(this.timeTextBox_TextChanged);
+            // 
+            // positionLabel
+            // 
+            this.positionLabel.AutoSize = true;
+            this.positionLabel.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.positionLabel.Location = new System.Drawing.Point(14, 102);
+            this.positionLabel.Name = "positionLabel";
+            this.positionLabel.Size = new System.Drawing.Size(71, 19);
+            this.positionLabel.TabIndex = 13;
+            this.positionLabel.Text = "Place @";
             // 
             // AnnotationPanel
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this.positionLabel);
+            this.Controls.Add(this.timeTextBox);
             this.Controls.Add(this.CancelButton);
             this.Controls.Add(this.RemoveButton);
             this.Controls.Add(this.commentTextBox);
@@ -95,5 +118,7 @@
         private System.Windows.Forms.TextBox commentTextBox;
         private System.Windows.Forms.Button CancelButton;
         private System.Windows.Forms.Button RemoveButton;
+        private System.Windows.Forms.TextBox timeTextBox;
+        private System.Windows.Forms.Label positionLabel;
     }
 }

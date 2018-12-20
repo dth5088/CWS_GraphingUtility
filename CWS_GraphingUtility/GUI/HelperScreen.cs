@@ -23,6 +23,8 @@ namespace CWS_GraphingUtility.GUI
         public Utilities()
         {
             InitializeComponent();
+
+            dataManipulationPanel.DataChanged += new Controls.DataManipulationPanel.DataChangeEventHandler(OnDataChanged);
         }
 
         #endregion
@@ -89,8 +91,24 @@ namespace CWS_GraphingUtility.GUI
 
         public void UpdateStageData(StageData sd)
         {
-            CurrentStage = sd;
+            if (CurrentStage != sd)
+            {
+                CurrentStage = sd;
+            }
         }
+
+        private void OnDataChanged(object sender, EventArgs e)
+        {
+            var parent = Parent as GraphDisplayControlScreen;
+
+            if(parent != null)
+            {
+                parent.RefreshChart();
+            }
+            CloseDialog();
+        }
+
+
 
         #endregion
 

@@ -116,8 +116,6 @@ namespace CWS_GraphingUtility.Utiltity
             }
 
             CreateStageCollections(pressure, water, sand, duration);
-
-            SortCollections();
         }
 
 
@@ -168,13 +166,6 @@ namespace CWS_GraphingUtility.Utiltity
             
         }
 
-        private void SortCollections()
-        {
-            pressureData.OrderBy(i => i.Key);
-            waterData.OrderBy(i => i.Key);
-            sandData.OrderBy(i => i.Key);
-        }
-
         /// <summary>
         /// Deletes all of the items in the pressureData list that fall
         /// within the start and end times passed.
@@ -183,43 +174,72 @@ namespace CWS_GraphingUtility.Utiltity
         /// <param name="end">The last time to delete.</param>
         public void DeletePressurFromTo(DateTime start, DateTime end)
         {
-            var temp = pressureData;
+            var temp = pressureData.Keys.ToArray();
             foreach (var obj in temp)
             {
-                if(obj.Key.CompareTo(start) >= 0 && obj.Key.CompareTo(end) < 0)
+                if(obj.CompareTo(start) >= 0 && obj.CompareTo(end) < 0)
                 {
-                    pressureData.Remove(obj.Key);
+                    pressureData.Remove(obj);
                 }
             }
         }
 
-        public void DeleteAllValuesBefore(DateTime start)
+        public bool DeleteAllValuesBefore(DateTime start)
         {
-            var temp = pressureData;
+            bool toReturn = false;
+            var temp = pressureData.Keys.ToList();
 
-            foreach(var obj in temp)
+            foreach (var obj in temp)
             {
-                if(obj.Key.CompareTo(start) < 0 )
+                var tod = obj.TimeOfDay;
+
+                if(tod.CompareTo(start.TimeOfDay) < 0 )
                 {
-                    pressureData.Remove(obj.Key);
-                    waterData.Remove(obj.Key);
-                    sandData.Remove(obj.Key);
+                    Console.Out.WriteLine("Time: " + tod);
+                    pressureData.Remove(obj);
+                    waterData.Remove(obj);
+                    sandData.Remove(obj);
+                    toReturn = true;
                 }
             }
+            return toReturn;
         }
 
-        public void DeteAllValuesAfter(DateTime start)
+        public bool DeleteAllValuesAfter(DateTime start)
         {
-            var temp = pressureData;
+            bool toReturn = false;
+            var temp = pressureData.Keys.ToList();
+
             foreach(var obj in temp)
             {
-                if(obj.Key.CompareTo(start) > 0)
+                var tod = obj.TimeOfDay;
+                if(tod.CompareTo(start.TimeOfDay) > 0)
                 {
-                    pressureData.Remove(obj.Key);
-                    waterData.Remove(obj.Key);
-                    sandData.Remove(obj.Key);
+                    pressureData.Remove(obj);
+                    waterData.Remove(obj);
+                    sandData.Remove(obj);
+                    toReturn = true;
                 }
             }
+            return toReturn;
+        }
+
+        public bool DeleteAllValuesBetween(DateTime start, DateTime end)
+        {
+            bool toReturn = false;
+            var temp = pressureData.Keys.ToList();
+            foreach (var obj in temp)
+            {
+                var tod = obj.TimeOfDay;
+                if(tod.CompareTo(start.TimeOfDay) < 0 && tod.CompareTo(end.TimeOfDay) > 0)
+                {
+                    pressureData.Remove(obj);
+                    waterData.Remove(obj);
+                    sandData.Remove(obj);
+                    toReturn = true;
+                }
+            }
+            return toReturn;
         }
 
         public bool IsProvidedDateValid(DateTime toTest)
@@ -244,7 +264,29 @@ namespace CWS_GraphingUtility.Utiltity
             return new Tuple<DateTime, DateTime>(b, e);
         }
 
+        public DateTime GetTimeClosesTo(TimeSpan time)
+        {
+            foreach(var obj in pressureData.Keys)
+            {
+                var tod = obj.TimeOfDay;
+                if(tod == time)
+                {
+                    return obj;
+                }
 
+                if(tod < time && tod.TotalSeconds == time.TotalSeconds - 1)
+                {
+                    return obj;
+                }
+
+                if(tod > time && tod.TotalSeconds == time.TotalSeconds + 1)
+                {
+                    return obj;
+                }
+            }
+
+            return DateTime.MinValue;
+        }
 
         /// <summary>
         /// Deletes all of the items in the pressureData list that fall
@@ -284,7 +326,7 @@ namespace CWS_GraphingUtility.Utiltity
 
         public void FillPressureSeries(Series series)
         {
-            foreach( var obj in PressureSeriesData)
+            foreach( var obj in pressureData)
             {
                 DateTime t = obj.Key;
                 double p = obj.Value;
@@ -295,7 +337,7 @@ namespace CWS_GraphingUtility.Utiltity
 
         public void FillWaterSeries(Series series)
         {
-            foreach (var obj in WaterSeriesData)
+            foreach (var obj in waterData)
             {
                 DateTime t = obj.Key;
                 double p = obj.Value;
@@ -305,7 +347,7 @@ namespace CWS_GraphingUtility.Utiltity
 
         public void FillSandSeries(Series series)
         {
-            foreach (var obj in SandSeriesData)
+            foreach (var obj in sandData)
             {
                 DateTime t = obj.Key;
                 double p = obj.Value;

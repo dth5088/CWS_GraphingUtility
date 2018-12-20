@@ -12,6 +12,12 @@ namespace CWS_GraphingUtility.GUI.Controls
 {
     public partial class AnnotationPanel : UserControl
     {
+        public delegate void ChartAnnotationHandler(object o, EventArgs e);
+
+        public event ChartAnnotationHandler AnnotationCreated;
+
+        private string timeText = string.Empty;
+
         public AnnotationPanel()
         {
             InitializeComponent();
@@ -29,9 +35,33 @@ namespace CWS_GraphingUtility.GUI.Controls
         {
             var parent = Parent as Utilities;
 
+            string timeString = timeTextBox.Text;
+
+            DateTime dt = DateTime.Parse(timeString);
+
+            if(dt != null && parent != null)
+            {
+
+                TimeSpan ts = dt.TimeOfDay;
+
+                parent.CloseDialog();
+
+            }
+
             if(parent != null)
             {
-                parent.CloseDialog();
+
+                string comment = commentTextBox.Text;
+                string timeText = timeTextBox.Text;
+
+                DateTime convertedText = DateTime.Parse(timeText);
+
+                if(convertedText != null && !string.IsNullOrEmpty(comment))
+                {
+                    AnnotationEventArgs eventArgs = new AnnotationEventArgs(comment, convertedText.TimeOfDay);
+                    AnnotationCreated(this, eventArgs);
+                    parent.CloseDialog();
+                }
             }
         }
 
@@ -43,6 +73,42 @@ namespace CWS_GraphingUtility.GUI.Controls
             {
                 parent.CloseDialog();
             }
+        }
+
+        private void timeTextBox_TextChanged(object sender, EventArgs e)
+        {
+            timeTextBox.MaxLength = 8;
+
+            CheckChar();
+
+            if(timeTextBox.Text.Length == 2)
+            {
+                timeTextBox.Text += ":";
+            }
+        }
+
+        private void CheckChar()
+        {
+            char last = timeTextBox.Text.Last();
+
+            if(!char.IsDigit(last) && !last.Equals(':'))
+            {
+                SendKeys.Send("{BACKSPACE}");
+            }
+        }
+    }
+
+    [Serializable]
+    public class AnnotationEventArgs : EventArgs
+    {
+        public string Comment { get; private set; }
+
+        public TimeSpan Time { get; private set; }
+
+        public AnnotationEventArgs(string commentString, TimeSpan time)
+        {
+            Time = time;
+            Comment = commentString;
         }
     }
 }

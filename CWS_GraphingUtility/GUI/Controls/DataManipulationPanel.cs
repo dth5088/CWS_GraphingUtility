@@ -32,6 +32,10 @@ namespace CWS_GraphingUtility.GUI.Controls
 
         private StageData stageData;
 
+        public event DataChangeEventHandler DataChanged;
+
+        public delegate void DataChangeEventHandler(object o, EventArgs e);
+
         #endregion
 
         #region Constructor
@@ -158,73 +162,74 @@ namespace CWS_GraphingUtility.GUI.Controls
         /// </summary>
         /// <param name="sender">The invoker of the event.</param>
         /// <param name="e">The event arguments.</param>
-        private void textBox_TextChanged(object sender, EventArgs e)
+        private void RemoveButton_Clicked(object sender, EventArgs e)
         {
             string textToValidate = null;
+            bool before = false, after = false, both = false;
+            bool toReturn = false;
+
             switch (selectedOption)
             {
+
                 case SelectedOption.Before:
                     textToValidate = allBeforeTextBox.Text;
+                    before = true;
                     break;
 
                 case SelectedOption.After:
                     textToValidate = allAfterTextBox.Text;
+                    after = true;
                     break;
 
                 case SelectedOption.Between:
                     textToValidate = allBeforeTextBox.Text;
                     textToValidate += "," + allAfterTextBox.Text;
+                    both = true;
                     break;
 
             }
 
             if (validateText(textToValidate))
             {
-                IsTextValid = true;
+                DialogResult result = MessageBox.Show("Are you sure?", "Confirm Deletion", MessageBoxButtons.YesNo);
+                if(result == DialogResult.Yes)
+                {
+                    if(before)
+                    {
+                        DateTime dt = DateTime.Parse(textToValidate);
+                        if(dt != null)
+                        {
+                            toReturn = stageData.DeleteAllValuesBefore(dt);
+                        }
+                    }
+                    else if (after)
+                    {
+                        DateTime dt = DateTime.Parse(textToValidate);
+                        if(dt != null)
+                        {
+                            toReturn = stageData.DeleteAllValuesAfter(dt);
+                        }
+                    }
+                    else if (both)
+                    {
+                        DateTime f = DateTime.Parse(allBeforeTextBox.Text);
+                        DateTime s = DateTime.Parse(allAfterTextBox.Text);
+                        toReturn = stageData.DeleteAllValuesBetween(f, s);
+                    }
+                        
+                }
             }
-        }
 
-        /// <summary>
-        /// Handles when the remove button is clicked.
-        /// </summary>
-        /// <param name="sender">The invoker of the event.</param>
-        /// <param name="e">The event arguments.</param>
-        private void RemoveButton_Click(object sender, EventArgs e)
-        {
-            var parent = Parent as Utilities;
-
-
-            switch (selectedOption)
+            if(toReturn)
             {
-                case SelectedOption.Before:
-                    if (IsTextValid)
-                    {
-                        // Handle deletion of data
-
-
-                    }
-                    break;
-
-                case SelectedOption.After:
-                    if (IsTextValid)
-                    {
-
-                    }
-                    break;
-
-                case SelectedOption.Between:
-                    if (IsTextValid)
-                    {
-
-                    }
-                    break;
-
+                DialogResult result = MessageBox.Show("Deletion Success!");
+                if(result == DialogResult.OK)
+                {
+                    DataChanged(this, EventArgs.Empty);                    
+                }
             }
 
-            if (parent != null)
-            {
-                parent.CloseDialog();
-            }
+
         }
 
         private void CancelButton_Click(object sender, EventArgs e)

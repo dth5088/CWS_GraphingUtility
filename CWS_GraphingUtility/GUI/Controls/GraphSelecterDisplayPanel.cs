@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using CWS_GraphingUtility.Utiltity;
+using System.Windows.Forms.DataVisualization.Charting;
 
 namespace CWS_GraphingUtility.GUI.Controls
 {
@@ -65,8 +66,6 @@ namespace CWS_GraphingUtility.GUI.Controls
         private int totalNumberOfStages;
 
         private MenuItem editMode;
-
-        private MenuItem viewMode;
 
         private MenuItem addAnnotation;
 
@@ -268,16 +267,36 @@ namespace CWS_GraphingUtility.GUI.Controls
             contextMenu.MenuItems.Add(editMode);
             contextMenu.MenuItems.Add(addAnnotation);
             contextMenu.MenuItems.Add(deleteStage);
+            contextMenu.MenuItems.Add(print);
 
-            if(parent != null)
-            {
-                parent.AlertHelperScreenClosed();
-            }
+            UpdateStageDetails();
+
         }
 
         public void UpdateChartValues()
         {
             UpdateStageDetails();
+        }
+
+        public void AddAnnotationToGraph(TimeSpan key, string comment)
+        {
+            //LineAnnotation lineAnnotation = new LineAnnotation();
+            TextAnnotation annotation = new TextAnnotation();
+            annotation.Text = comment;
+
+            DateTime dt = StageData.GetTimeClosesTo(key);
+
+            if (dt != null && dt != DateTime.MinValue)
+            {
+
+                annotation.AnchorX = dt.ToOADate();
+                displayedChart.Annotations.Add(annotation);
+                displayedChart.UpdateAnnotations();
+                Console.Out.WriteLine("Annotation Added: " + annotation);
+            }
+            else
+                Console.Out.WriteLine("Annotation not added: " + dt);
+
         }
 
         #endregion
@@ -288,7 +307,6 @@ namespace CWS_GraphingUtility.GUI.Controls
         {
             contextMenu = new ContextMenu();
             editMode = new MenuItem("Enter Edit Mode", new EventHandler(EditDataMode_Click));
-            viewMode = new MenuItem("Enter View Mode", new EventHandler(ViewDataMode_Click));
             addAnnotation = new MenuItem("Add Annotation", new EventHandler(AddAnnotation_Click));
             deleteStage = new MenuItem("Delete Current Stage", new EventHandler(DeleteStage_Click));
             undoChanges = new MenuItem("Undo All Changes", new EventHandler(UndoChanges_Click));
@@ -357,9 +375,8 @@ namespace CWS_GraphingUtility.GUI.Controls
 
         }
 
+
         #endregion
-
-
 
         #endregion
 
@@ -391,27 +408,9 @@ namespace CWS_GraphingUtility.GUI.Controls
             {
                 var times = StageData.GetStartEndTimes();
                 ChangeMode(this, new ModeChangeEventArgs(Mode.Edit,times.Item1, times.Item2));
-                if(contextMenu.MenuItems.Contains(editMode))
-                {
-                    contextMenu.MenuItems.Clear();
-                    contextMenu.MenuItems.Add(viewMode);
-                    contextMenu.MenuItems.Add(addAnnotation);
-                }
             }
         }
 
-        private void ViewDataMode_Click(object sender, EventArgs e)
-        {
-            if(null!= ChangeMode)
-            {
-                ChangeMode(this, new ModeChangeEventArgs(Mode.View));
-
-                if (contextMenu.MenuItems.Contains(viewMode))
-                {
-                    ResetContextMenu();
-                }
-            }
-        }
 
         /// <summary>
         /// Handles when the Add Annotations ContextMenuItem is clicked.

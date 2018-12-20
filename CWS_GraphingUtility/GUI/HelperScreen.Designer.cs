@@ -60,6 +60,7 @@
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "Utilities";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Utilities";
             this.ResumeLayout(false);
 
@@ -68,6 +69,6 @@
         #endregion
 
         private Controls.DataManipulationPanel dataManipulationPanel;
-        private Controls.AnnotationPanel annotationPanel;
+        public Controls.AnnotationPanel annotationPanel;
     }
 }
