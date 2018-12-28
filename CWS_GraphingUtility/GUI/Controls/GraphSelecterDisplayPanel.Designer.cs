@@ -91,8 +91,12 @@
             // 
             chartArea1.AxisX.Title = "Time";
             chartArea1.AxisX.TitleFont = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            chartArea1.AxisY.Maximum = 5000D;
+            chartArea1.AxisY.Minimum = 0D;
             chartArea1.AxisY.Title = "Pressure";
             chartArea1.AxisY.TitleFont = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            chartArea1.AxisY2.Maximum = 25D;
+            chartArea1.AxisY2.Minimum = 0D;
             chartArea1.AxisY2.Title = "Rate";
             chartArea1.AxisY2.TitleFont = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             chartArea1.Name = "ChartArea";

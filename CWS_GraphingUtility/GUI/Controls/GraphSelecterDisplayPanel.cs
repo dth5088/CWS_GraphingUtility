@@ -9,6 +9,10 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using CWS_GraphingUtility.Utiltity;
 using System.Windows.Forms.DataVisualization.Charting;
+using System.Drawing.Printing;
+using System.IO;
+using iTextSharp.text;
+using iTextSharp.text.pdf;
 
 namespace CWS_GraphingUtility.GUI.Controls
 {
@@ -299,6 +303,26 @@ namespace CWS_GraphingUtility.GUI.Controls
 
         }
 
+        public void BuildPrintJob()
+        {
+            var parent = this.Parent as GraphDisplayControlScreen;
+            Document Doc = new Document(PageSize.A4, 10f, 10f, 10f, 0);
+
+            if (parent != null)
+            {
+                JobData jd = parent.JobData;
+                if (jd != null)
+                {
+
+                    string fileName = BuildCharts(jd);
+
+                    System.Diagnostics.Process.Start(fileName);
+                    
+                }
+            }
+            
+        }
+
         #endregion
 
         #region Private
@@ -373,6 +397,51 @@ namespace CWS_GraphingUtility.GUI.Controls
                 }
             }
 
+        }        
+
+        private string BuildCharts(JobData jd)
+        {
+            string fileName = Path.GetTempPath() + "\\" + jd.JobTitle + ".pdf";
+            Dictionary<int, iTextSharp.text.Image> charts = new Dictionary<int, iTextSharp.text.Image>();
+            Chart newChart = displayedChart;
+            Document doc = new Document(PageSize.A4.Rotate(), 10f, 10f, 10f, 10f);
+
+            PdfWriter.GetInstance(doc, new FileStream(fileName, FileMode.Create));
+
+            doc.Open();
+            List<StageData> stages = jd.ListOfStages;
+            foreach(StageData stage in stages)
+            {
+                // clear the chart
+                newChart.Series["PressureSeries"].Points.Clear();
+                newChart.Series["WaterSeries"].Points.Clear();
+                newChart.Series["SandSeries"].Points.Clear();
+
+                var st = stage.StageNumber;
+
+                // assign the correct title.
+                newChart.Titles["StageTitle"].Text = "Stage: " + st;
+
+                // fill the series data
+                stage.FillPressureSeries(newChart.Series["PressureSeries"]);
+                stage.FillWaterSeries(newChart.Series["WaterSeries"]);
+                stage.FillSandSeries(newChart.Series["SandSeries"]);
+
+                // update the chart
+                newChart.Update();
+
+                using (var chartimage = new MemoryStream())
+                {
+                    newChart.SaveImage(chartimage, ChartImageFormat.Png);
+                    iTextSharp.text.Image picture = iTextSharp.text.Image.GetInstance(chartimage.ToArray());
+                    picture.ScaleToFit(PageSize.A4.Rotate());
+                    doc.Add(picture);
+                    doc.NewPage();
+                }
+            }
+            doc.Close();
+
+            return fileName;
         }
 
 
@@ -440,7 +509,7 @@ namespace CWS_GraphingUtility.GUI.Controls
 
         private void Print_Click(object sender, EventArgs e)
         {
-            Console.Out.WriteLine("Print was clicked!");
+            BuildPrintJob();
         }
 
         #endregion

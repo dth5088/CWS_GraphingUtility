@@ -65,6 +65,7 @@ namespace CWS_GraphingUtility.GUI
 
         public void OpenDialog(UtilityMode mode, DateTime start, DateTime end)
         {
+
             bool canContinue = mode == UtilityMode.DataManipulation;
 
             if(canContinue)

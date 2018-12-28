@@ -1,10 +1,14 @@
 ﻿using CWS_GraphingUtility.GUI.Controls;
 using CWS_GraphingUtility.Utiltity;
+using iTextSharp.text;
+using iTextSharp.text.pdf;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.Drawing.Printing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -33,8 +37,7 @@ namespace CWS_GraphingUtility.GUI
         #endregion
 
         #region Properties
-
-        
+        public JobData JobData => jobData;
         #endregion
 
         #region Constructor
@@ -118,10 +121,14 @@ namespace CWS_GraphingUtility.GUI
             graphDisplayPanel.UpdateChartValues();
         }
 
+        
+
+
+
         #endregion
 
         #region Private
-
+        
         #endregion
 
         #endregion

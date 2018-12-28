@@ -31,34 +31,56 @@ namespace CWS_GraphingUtility.GUI.Controls
             commentTextBox.Text = string.Empty;
         }
 
+        private TimeSpan ConvertToTimeSpan(string timeText)
+        {
+            bool hasSecs = timeText.Length >= 1;
+            bool hasMins = timeText.Length >= 4;
+            bool hasHours = timeText.Length == 6;
+
+            int secs, mins, hours;
+
+            if(hasHours)
+            {
+                int.TryParse(timeText.Substring(0, 2), out hours);
+            }
+            else
+            {
+                hours = 0;
+            }
+
+            if (hasMins)
+            {
+                int.TryParse(timeText.Substring(3, 2), out mins);
+            }
+            else
+                mins = 0;
+
+            if (hasSecs)
+            {
+                int.TryParse(timeText.Substring(6, 2), out secs);
+            }
+            else
+                secs = 0;
+
+
+            return new TimeSpan(hours, mins, secs);
+        }
+
         private void RemoveButton_Click(object sender, EventArgs e)
         {
             var parent = Parent as Utilities;
 
-            string timeString = timeTextBox.Text;
+            string comment = commentTextBox.Text;
 
-            DateTime dt = DateTime.Parse(timeString);
-
-            if(dt != null && parent != null)
+            if (parent != null)
             {
+                string timeText = timeTextBox.Text.Replace(" ", string.Empty).Replace(":",string.Empty);
+                bool isValid = timeText.Length >= 2;
 
-                TimeSpan ts = dt.TimeOfDay;
-
-                parent.CloseDialog();
-
-            }
-
-            if(parent != null)
-            {
-
-                string comment = commentTextBox.Text;
-                string timeText = timeTextBox.Text;
-
-                DateTime convertedText = DateTime.Parse(timeText);
-
-                if(convertedText != null && !string.IsNullOrEmpty(comment))
+                if(isValid && !string.IsNullOrEmpty(comment))
                 {
-                    AnnotationEventArgs eventArgs = new AnnotationEventArgs(comment, convertedText.TimeOfDay);
+                    
+                    AnnotationEventArgs eventArgs = new AnnotationEventArgs(comment, ConvertToTimeSpan(timeText));
                     AnnotationCreated(this, eventArgs);
                     parent.CloseDialog();
                 }
@@ -74,29 +96,8 @@ namespace CWS_GraphingUtility.GUI.Controls
                 parent.CloseDialog();
             }
         }
-
-        private void timeTextBox_TextChanged(object sender, EventArgs e)
-        {
-            timeTextBox.MaxLength = 8;
-
-            CheckChar();
-
-            if(timeTextBox.Text.Length == 2)
-            {
-                timeTextBox.Text += ":";
-            }
-        }
-
-        private void CheckChar()
-        {
-            char last = timeTextBox.Text.Last();
-
-            if(!char.IsDigit(last) && !last.Equals(':'))
-            {
-                SendKeys.Send("{BACKSPACE}");
-            }
-        }
     }
+       
 
     [Serializable]
     public class AnnotationEventArgs : EventArgs

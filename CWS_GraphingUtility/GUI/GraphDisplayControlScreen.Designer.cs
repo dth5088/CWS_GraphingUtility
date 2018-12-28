@@ -30,6 +30,7 @@
         {
             this.configButton = new System.Windows.Forms.Button();
             this.graphDisplayPanel = new CWS_GraphingUtility.GUI.Controls.GraphSelecterDisplayPanel();
+            this.printDialog = new System.Windows.Forms.PrintDialog();
             this.SuspendLayout();
             // 
             // configButton
@@ -54,6 +55,10 @@
             this.graphDisplayPanel.TabIndex = 0;
             this.graphDisplayPanel.TotalStages = 0;
             // 
+            // printDialog
+            // 
+            this.printDialog.UseEXDialog = true;
+            // 
             // GraphDisplayControlScreen
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -73,5 +78,6 @@
 
         private Controls.GraphSelecterDisplayPanel graphDisplayPanel;
         private System.Windows.Forms.Button configButton;
+        private System.Windows.Forms.PrintDialog printDialog;
     }
 }

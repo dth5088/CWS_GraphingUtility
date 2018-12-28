@@ -29,17 +29,17 @@ namespace CWS_GraphingUtility.Utiltity
         /// <summary>
         /// String representation of the job title.
         /// </summary>
-        private string jobTitle;
+        public string JobTitle { get; set; }
 
         /// <summary>
         /// String representation of the field.
         /// </summary>
-        private string field;
+        public string Field { get; set; }
 
         /// <summary>
         /// String representation of the well.
         /// </summary>
-        private string well;
+        public string Well { get; set; }
 
 
         #endregion
@@ -99,10 +99,16 @@ namespace CWS_GraphingUtility.Utiltity
         {
             using (StreamReader reader = File.OpenText(filePath)) {
                 Newtonsoft.Json.Linq.JObject o = (JObject)JToken.ReadFrom(new JsonTextReader(reader));
-
+         
                 string jobName = (string)o["name"];
                 string field = (string)o["field"];
                 string well = (string)o["well"];
+
+                JobTitle = jobName + "_"+field+"_" + well;
+
+                Field = field;
+
+                Well = well;
 
                 JArray stges = (JArray)o["stages"];
 
@@ -181,6 +187,9 @@ namespace CWS_GraphingUtility.Utiltity
                 stages.Remove(stage);
             }
         }
+
+        public List<StageData> ListOfStages => stages.Values.ToList<StageData>();
+
 
         public void UndoAllChanges()
         {
